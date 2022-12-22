@@ -128,12 +128,12 @@ class Parser {
 	function parseEndNext(endKeyword:Token, kindKwd:Keyword):BodyEnd {
 		return {
 			endKeyword: endKeyword,
-			kindKeyword: expectOptional(t -> switch (t.kind) {
+			kindKeyword: switch (scanner.advanceSameLine().kind) {
 				case TkKeyword(kwd) if (kwd == kindKwd):
-					!hasNewline(endKeyword.trailTrivia) && !hasNewline(t.leadTrivia);
+					scanner.consume();
 				case _:
-					false;
-			})
+					null;
+			}
 		};
 	}
 
@@ -540,12 +540,5 @@ class Parser {
 			case TkKeyword(kwd) if (expectedKwd == expectedKwd): true;
 			case _: false;
 		}, expectedKwd.getName());
-	}
-
-	function hasNewline(trivia:Array<Trivia>):Bool {
-		for (t in trivia) {
-			if (t.kind == TrNewline) return true;
-		}
-		return false;
 	}
 }

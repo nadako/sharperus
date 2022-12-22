@@ -56,6 +56,7 @@ enum TokenKind {
 	TkHash;
 	TkDollar;
 	TkEof;
+	TkEol; // only returned when scanning on the same line
 	TkParenOpen;
 	TkParenClose;
 	TkBracketOpen;

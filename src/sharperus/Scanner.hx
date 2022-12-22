@@ -17,15 +17,28 @@ class Scanner {
 	var tokenStartPos:Int;
 	var leadTrivia:Array<Trivia>;
 	var lastToken:Null<Token>;
+	var prevTokenHadTrailingNewLine:Bool;
 
 	public function new(text:String) {
 		this.text = text;
 		end = text.length;
 		pos = tokenStartPos = 0;
 		leadTrivia = [];
+		prevTokenHadTrailingNewLine = false;
 	}
 
 	public function advance():PeekToken {
+		return doAdvance();
+	}
+
+	public function advanceSameLine():PeekToken {
+		if (prevTokenHadTrailingNewLine) {
+			return new Token(tokenStartPos, TkEol, "", [], []);
+		}
+		return doAdvance();
+	}
+
+	function doAdvance():PeekToken {
 		if (lastToken != null) {
 			return lastToken;
 		}
@@ -38,6 +51,7 @@ class Scanner {
 		var consumedToken = lastToken;
 		if (consumedToken == null) throw new haxe.Exception("No token to consume");
 		lastToken = null;
+		prevTokenHadTrailingNewLine = breaksOnNewLine(consumedToken.trailTrivia);
 		return consumedToken;
 	}
 
@@ -417,5 +431,9 @@ class Scanner {
 
 	inline function isIdentPart(ch) {
 		return ch == "_".code || isDigit(ch) || isAlphabetic(ch);
+	}
+
+	function breaksOnNewLine(trivia:Array<Trivia>):Bool {
+		return trivia.length > 0 && trivia[trivia.length - 1].kind == TrNewline;
 	}
 }
