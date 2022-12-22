@@ -1,0 +1,4 @@
+{
+	"sourceDirs": ["test-src"],
+	"outputDir": "test-out"
+}

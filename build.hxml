@@ -1,0 +1,6 @@
+--class-path src
+--main sharperus.Main
+--debug
+--jvm convert.jar
+--cmd java -jar convert.jar convert.json
+--macro nullSafety("sharperus", Strict)
