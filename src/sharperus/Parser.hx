@@ -26,6 +26,10 @@ class Parser {
 		while (true) {
 			var token = scanner.advance();
 			switch (token.kind) {
+				case TkKeyword(KwdStrict):
+					return DStrict(scanner.consume());
+				case TkKeyword(KwdImport):
+					return DImport(scanner.consume(), parseDotPath());
 				case TkKeyword(KwdGlobal):
 					return DGlobal(parseVarDeclNext({keyword: scanner.consume(), kind: VKGlobal}));
 				case TkKeyword(KwdConst):
@@ -186,6 +190,9 @@ class Parser {
 
 			case TkKeyword(KwdContinue):
 				SContinue(scanner.consume());
+
+			case TkKeyword(KwdReturn):
+				SReturn(scanner.consume(), parseOptionalExpr());
 
 			case _:
 				var expr = parseOptionalExpr();
@@ -438,6 +445,10 @@ class Parser {
 				return parseBinop(first, OpMul);
 			case TkSlash:
 				return parseBinop(first, OpDiv);
+			case TkPlus:
+				return parseBinop(first, OpAdd);
+			case TkMinus:
+				return parseBinop(first, OpSub);
 			case TkDot:
 				return parseExprNext(EMember(first, scanner.consume(), expectKind(TkIdent)));
 			case TkParenOpen:
@@ -517,11 +528,15 @@ class Parser {
 	}
 
 	function parseDotPath():DotPath {
-		return parseSeparated(expectKind.bind(TkIdent), t -> t.kind == TkDot);
+		return parseSeparated(expectTypeIdent, t -> t.kind == TkDot);
 	}
 
-	function parseDotPathNext(first:Token):DotPath {
-		return parseSeparatedNext(first, expectKind.bind(TkIdent), t -> t.kind == TkDot);
+	function expectTypeIdent():Token {
+		return expect(t -> switch (t.kind) {
+			case TkIdent: true;
+			case TkKeyword(KwdInt | KwdString | KwdBool | KwdFloat): true;
+			case _: false;
+		}, "identifier");
 	}
 
 	function parseSyntaxTypeNext(first:SyntaxType):SyntaxType {

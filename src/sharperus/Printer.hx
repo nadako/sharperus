@@ -25,10 +25,19 @@ class Printer {
 
 	function printDeclaration(decl:Declaration) {
 		switch (decl) {
-			case DGlobal(varDecl): printVarDecl(varDecl);
-			case DConst(constDecl): printConstDecl(constDecl);
-			case DFunction(funDecl): printFunctionDecl(funDecl);
-			case DClass(classDecl): printClassDecl(classDecl);
+			case DStrict(keyword):
+				printKeyword("Strict", keyword);
+			case DImport(keyword, path):
+				printKeyword("Import", keyword);
+				printDotPath(path);
+			case DGlobal(varDecl):
+				printVarDecl(varDecl);
+			case DConst(constDecl):
+				printConstDecl(constDecl);
+			case DFunction(funDecl):
+				printFunctionDecl(funDecl);
+			case DClass(classDecl):
+				printClassDecl(classDecl);
 		}
 	}
 
@@ -163,6 +172,9 @@ class Printer {
 				printExpr(left);
 				printTextWithTrivia("=", equals);
 				printExpr(right);
+			case SReturn(keyword, e):
+				printKeyword("Return", keyword);
+				if (e != null) printExpr(e);
 		}
 	}
 

@@ -51,6 +51,7 @@ function parseModule(path:String):Null<ParseTree.Module> {
 	var parser = new Parser(scanner, path);
 	var parseTree = try parser.parse() catch (e) {
 		context.reportError(path, scanner.pos, e.message);
+		Sys.println(e.stack.toString());
 		null;
 	}
 	if (parseTree != null) {

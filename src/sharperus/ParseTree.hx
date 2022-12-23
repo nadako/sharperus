@@ -8,6 +8,8 @@ typedef Module = {
 }
 
 enum Declaration {
+	DStrict(keyword:Token);
+	DImport(keyword:Token, dotPath:DotPath);
 	DGlobal(v:VarDecl);
 	DConst(c:ConstDecl);
 	DFunction(f:FunctionDecl);
@@ -225,6 +227,7 @@ enum StatementKind {
 	SExit(keyword:Token);
 	SContinue(keyword:Token);
 	SAssign(left:Expr, equals:Token, right:Expr);
+	SReturn(keyword:Token, e:Null<Expr>);
 }
 
 typedef IfStatement = {
