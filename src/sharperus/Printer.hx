@@ -295,7 +295,17 @@ class Printer {
 				printExpr(left);
 				printBinop(op);
 				printExpr(right);
+			case ENew(n):
+				printKeyword("New", n.newKeyword);
+				printTypePath(n.typePath);
+				if (n.callParams != null) printCallParams(n.callParams);
 		}
+	}
+
+	function printCallParams(params:CallParams) {
+		printTextWithTrivia("(", params.openParen);
+		if (params.params != null) printSeparated(params.params, printExpr, printComma);
+		printTextWithTrivia(")", params.closeParen);
 	}
 
 	function printBinop(op:Binop) {

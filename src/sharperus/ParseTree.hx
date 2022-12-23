@@ -30,11 +30,13 @@ typedef ClassDecl = {
 
 typedef TypePath = {
 	var dotPath:DotPath;
-	var params:Null<{
-		var lt:Token;
-		var types:Separated<SyntaxType>;
-		var gt:Token;
-	}>;
+	var params:Null<TypeParams>;
+}
+
+typedef TypeParams = {
+	var lt:Token;
+	var types:Separated<SyntaxType>;
+	var gt:Token;
 }
 
 typedef DotPath = Separated<Token>;
@@ -82,6 +84,19 @@ enum Expr {
 	EArrayDecl(d:ArrayDecl);
 	EUnop(op:Unop, e:Expr);
 	EBinop(left:Expr, op:Binop, right:Expr);
+	ENew(e:NewExpr);
+}
+
+typedef NewExpr = {
+	var newKeyword:Token;
+	var typePath:TypePath;
+	var callParams:Null<CallParams>;
+}
+
+typedef CallParams = {
+	var openParen:Token;
+	var params:Null<Separated<Expr>>;
+	var closeParen:Token;
 }
 
 enum Unop {

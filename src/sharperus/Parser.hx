@@ -377,9 +377,32 @@ class Parser {
 				return parseExprNext(EUnop(UCompl(scanner.consume()), parseExpr()));
 			case TkKeyword(KwdNot):
 				return parseExprNext(EUnop(UNot(scanner.consume()), parseExpr()));
+			case TkKeyword(KwdNew):
+				return parseNewNext(scanner.consume());
 			case _:
 				return null;
 		}
+	}
+
+	function parseNewNext(newToken:Token) {
+		return parseExprNext(ENew({
+			newKeyword: newToken,
+			typePath: parseTypePath(),
+			callParams: parseOptionalCallParams(),
+		}));
+	}
+
+	function parseOptionalCallParams():Null<CallParams> {
+		var openParen = expectOptional(t -> t.kind == TkParenOpen);
+		if (openParen == null) {
+			// TODO: support parenthesis-less call params?
+			return null;
+		}
+		return {
+			openParen: openParen,
+			params: parseOptionalCommaSeparated(parseOptionalExpr),
+			closeParen: expectKind(TkParenClose),
+		};
 	}
 
 	function parseArrayDecl(openBracket:Token):ArrayDecl {
@@ -440,7 +463,7 @@ class Parser {
 	function parseTypePath():TypePath {
 		return {
 			dotPath: parseDotPath(),
-			params: null
+			params: parseOptionalTypeParams()
 		};
 	}
 
@@ -448,21 +471,22 @@ class Parser {
 		var token = scanner.advance();
 		return switch (token.kind) {
 			case TkIdent | TkKeyword(_):
-				parseSyntaxTypeNext(TPath({
-					dotPath: parseDotPathNext(scanner.consume()),
-					params: switch (scanner.advance().kind) {
-						case TkLt:
-							{
-								lt: scanner.consume(),
-								types: parseCommaSeparated(parseSyntaxType),
-								gt: expectKind(TkGt),
-							}
-						case _:
-							null;
-					}
-				}));
+				parseSyntaxTypeNext(TPath(parseTypePath()));
 			case _:
 				throw new Exception("Unexpected token for type: " + token);
+		}
+	}
+
+	function parseOptionalTypeParams():Null<TypeParams> {
+		switch (scanner.advance().kind) {
+			case TkLt:
+				return {
+					lt: scanner.consume(),
+					types: parseCommaSeparated(parseSyntaxType),
+					gt: expectKind(TkGt),
+				}
+			case _:
+				return null;
 		}
 	}
 
@@ -485,6 +509,16 @@ class Parser {
 
 	function parseCommaSeparated<T>(parsePart:Void->T):Separated<T> {
 		return parseSeparated(parsePart, t -> t.kind == TkComma);
+	}
+
+	function parseOptionalCommaSeparated<T>(parsePart:Void->Null<T>):Null<Separated<T>> {
+		return parseOptionalSeparated(parsePart, t -> t.kind == TkComma);
+	}
+
+	function parseOptionalSeparated<T>(parsePart:Void->Null<T>, checkSep:PeekToken->Bool):Null<Separated<T>> {
+		var first = parsePart();
+		if (first == null) return null;
+		return parseSeparatedNext(first, parsePart, checkSep);
 	}
 
 	function parseSeparated<T>(parsePart:Void->T, checkSep:PeekToken->Bool):Separated<T> {

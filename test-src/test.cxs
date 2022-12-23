@@ -1,16 +1,7 @@
+Class Actor
+End
+
 Function Main()
-
-    If True Then
-        "hi"
-    ElseIf True Then
-        1
-    Else If False Then
-        2
-    Else
-        "bye"
-    End
-
-End Function
-
-Function F()
+    Local pointer:Pointer<Actor>
+    New Pointer<Actor>(1, 2)
 End
