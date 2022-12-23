@@ -398,6 +398,10 @@ class Parser {
 			// TODO: support parenthesis-less call params?
 			return null;
 		}
+		return parseCallParamsNext(openParen);
+	}
+
+	function parseCallParamsNext(openParen:Token):CallParams {
 		return {
 			openParen: openParen,
 			params: parseOptionalCommaSeparated(parseOptionalExpr),
@@ -436,6 +440,8 @@ class Parser {
 				return parseBinop(first, OpDiv);
 			case TkDot:
 				return parseExprNext(EMember(first, scanner.consume(), expectKind(TkIdent)));
+			case TkParenOpen:
+				return parseExprNext(ECall(first, parseCallParamsNext(scanner.consume())));
 			case _:
 				return first;
 		}

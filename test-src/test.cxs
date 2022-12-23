@@ -3,5 +3,5 @@ End
 
 Function Main()
     Local pointer:Pointer<Actor>
-    pointer.Get.Get
+    pointer.Get.Get(123, new Pointer<Actor[]>)
 End
