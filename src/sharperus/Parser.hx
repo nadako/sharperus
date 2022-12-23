@@ -442,8 +442,26 @@ class Parser {
 				return parseExprNext(EMember(first, scanner.consume(), expectKind(TkIdent)));
 			case TkParenOpen:
 				return parseExprNext(ECall(first, parseCallParamsNext(scanner.consume())));
+			case TkBracketOpen:
+				return parseExprNext(EIndex(first, scanner.consume(), parseIndexer(), expectKind(TkBracketClose)));
 			case _:
 				return first;
+		}
+	}
+
+	function parseIndexer():Indexer {
+		var e = parseOptionalExpr();
+		if (e == null) {
+			// assume slice without start
+			var dots = expectKind(TkDotDot);
+			return Slice(null, dots, parseOptionalExpr());
+		} else {
+			var dots = expectOptional(t -> t.kind == TkDotDot);
+			if (dots == null) {
+				return Single(e);
+			} else {
+				return Slice(e, dots, parseOptionalExpr());
+			}
 		}
 	}
 

@@ -181,6 +181,9 @@ class Scanner {
 							pos++;
 							scanDigits(); // TODO: does cerberus support scientific notation?
 							return mk(TkFloat);
+						} else if (ch == ".".code) {
+							pos++;
+							return mk(TkDotDot);
 						} else {
 							return mk(TkDot);
 						}
@@ -200,6 +203,10 @@ class Scanner {
 				case "0".code:
 					pos++;
 					if (pos < end && text.fastCodeAt(pos) == ".".code) {
+						if (pos + 1 < end && text.fastCodeAt(pos + 1) == ".".code) {
+							// two dots is a different token
+							return mk(TkDecInteger);
+						}
 						pos++;
 						scanDigits();
 						return mk(TkFloat);
@@ -211,6 +218,10 @@ class Scanner {
 					pos++;
 					scanDigits();
 					if (pos < end && text.fastCodeAt(pos) == ".".code) {
+						if (pos + 1 < end && text.fastCodeAt(pos + 1) == ".".code) {
+							// two dots is a different token
+							return mk(TkDecInteger);
+						}
 						pos++;
 						scanDigits();
 						return mk(TkFloat);

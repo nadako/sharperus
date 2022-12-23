@@ -2,6 +2,10 @@ Class Actor
 End
 
 Function Main()
-    Local pointer:Pointer<Actor>
-    pointer.Get.Get(123, new Pointer<Actor[]>)
+    "Hello World"[4..7]
+    "Hello World"[..5]
+    "Hello World"[0..5]
+    "Hello World"[6..]
+    "Hello World"[..]
+    "Hello World"[-4..-2]
 End

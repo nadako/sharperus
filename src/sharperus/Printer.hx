@@ -306,6 +306,18 @@ class Printer {
 			case ECall(e, params):
 				printExpr(e);
 				printCallParams(params);
+			case EIndex(e, ob, i, cb):
+				printExpr(e);
+				printTextWithTrivia("[", ob);
+				switch (i) {
+					case Single(e):
+						printExpr(e);
+					case Slice(start, twoDots, end):
+						if (start != null) printExpr(start);
+						printTextWithTrivia("..", twoDots);
+						if (end != null) printExpr(end);
+				}
+				printTextWithTrivia("]", cb);
 		}
 	}
 

@@ -87,6 +87,12 @@ enum Expr {
 	ENew(e:NewExpr);
 	EMember(e:Expr, dot:Token, name:Token);
 	ECall(e:Expr, params:CallParams);
+	EIndex(e:Expr, openBracket:Token, i:Indexer, closeBracket:Token);
+}
+
+enum Indexer {
+	Single(e:Expr);
+	Slice(start:Null<Expr>, twoDots:Token, end:Null<Expr>);
 }
 
 typedef NewExpr = {
