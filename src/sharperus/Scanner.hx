@@ -78,6 +78,10 @@ class Scanner {
 					pos++;
 					return mk(TkSemicolon);
 
+				case "%".code:
+					pos++;
+					return mk(TkPercent);
+
 				case "*".code:
 					pos++;
 					if (pos < end) {

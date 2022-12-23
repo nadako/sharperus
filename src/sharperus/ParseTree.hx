@@ -3,6 +3,8 @@ package sharperus;
 import sharperus.Token;
 
 typedef Module = {
+	var file:String;
+	var path:String;
 	var declarations:Array<Declaration>;
 	var eof:Token;
 }

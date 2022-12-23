@@ -6,17 +6,21 @@ import sharperus.Token;
 
 class Parser {
 	final scanner:Scanner;
-	final path:String;
+	final file:String;
+	final modulePath:String;
 
-	public function new(scanner, path) {
+	public function new(scanner, file, modulePath) {
 		this.scanner = scanner;
-		this.path = path;
+		this.file = file;
+		this.modulePath = modulePath;
 	}
 
 	public inline function parse() return parseModule();
 
 	function parseModule():Module {
 		return {
+			file: file,
+			path: modulePath,
 			declarations: parseSequence(parseDeclaration),
 			eof: expectKind(TkEof),
 		};
@@ -534,7 +538,7 @@ class Parser {
 	function expectTypeIdent():Token {
 		return expect(t -> switch (t.kind) {
 			case TkIdent: true;
-			case TkKeyword(KwdInt | KwdString | KwdBool | KwdFloat): true;
+			case TkKeyword(KwdInt | KwdString | KwdBool | KwdFloat | KwdObject): true;
 			case _: false;
 		}, "identifier");
 	}

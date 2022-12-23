@@ -4,17 +4,11 @@ import sharperus.Token;
 import sharperus.ParseTree;
 
 /** prints back parse tree so we can make sure we parsed everything absolutely correctly **/
-class Printer {
+class Printer extends PrinterBase {
 	public static function print(module:Module) {
 		var printer = new Printer();
 		printer.printModule(module);
 		return printer.toString();
-	}
-
-	final buf:StringBuf;
-
-	function new() {
-		buf = new StringBuf();
 	}
 
 	function printModule(file:Module) {
@@ -208,22 +202,6 @@ class Printer {
 		}
 	}
 
-	function printSemicolon(token:Token) {
-		printTextWithTrivia(";", token);
-	}
-
-	function printComma(token:Token) {
-		printTextWithTrivia(",", token);
-	}
-
-	function printOpenParen(token:Token) {
-		printTextWithTrivia("(", token);
-	}
-
-	function printCloseParen(token:Token) {
-		printTextWithTrivia(")", token);
-	}
-
 	function printVarDecl(v:VarDecl) {
 		switch (v.kind.kind) {
 			case VKGlobal: printKeyword("Global", v.kind.keyword);
@@ -285,10 +263,6 @@ class Printer {
 			printSeparated(params.types, printSyntaxType, printComma);
 			printTextWithTrivia(">", params.gt);
 		}
-	}
-
-	function printDotPath(p:DotPath) {
-		printSeparated(p, printIdent, printDot);
 	}
 
 	function printExpr(e:Expr) {
@@ -376,44 +350,8 @@ class Printer {
 		printExpr(e);
 	}
 
-	inline function printIdent(token:Token) {
-		printTextWithTrivia(token.text, token);
-	}
-
-	inline function printColon(s:Token) {
-		printTextWithTrivia(":", s);
-	}
-
-	inline function printDot(s:Token) {
-		printTextWithTrivia(".", s);
-	}
-
 	function printKeyword(kwd:String, token:Token) {
 		if (kwd.toLowerCase() != token.text.toLowerCase()) buf.add('{WRONG KEYWORD: $kwd}');
 		printIdent(token);
-	}
-
-	function printTextWithTrivia(text:String, triviaToken:Token) {
-		printTrivia(triviaToken.leadTrivia);
-		buf.add(text);
-		printTrivia(triviaToken.trailTrivia);
-	}
-
-	function printTrivia(trivia:Array<Trivia>) {
-		for (item in trivia) {
-			buf.add(item.text);
-		}
-	}
-
-	function printSeparated<T>(s:Separated<T>, f:T->Void, fsep:Token->Void) {
-		f(s.first);
-		for (v in s.rest) {
-			fsep(v.sep);
-			f(v.element);
-		}
-	}
-
-	function toString() {
-		return buf.toString();
 	}
 }

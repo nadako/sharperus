@@ -18,6 +18,12 @@ class Token {
 	public function toString() {
 		return '${kind.getName()}(${haxe.Json.stringify(text)})';
 	}
+
+	public function removeTrailingNewline() {
+		if (trailTrivia.length > 0 || trailTrivia[trailTrivia.length - 1].kind == TrNewline) {
+			trailTrivia.pop();
+		}
+	}
 }
 
 @:forward(kind, text, leadTrivia, trailTrivia)
