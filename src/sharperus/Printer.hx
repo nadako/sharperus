@@ -299,6 +299,10 @@ class Printer {
 				printKeyword("New", n.newKeyword);
 				printTypePath(n.typePath);
 				if (n.callParams != null) printCallParams(n.callParams);
+			case EMember(left, dot, name):
+				printExpr(left);
+				printDot(dot);
+				printIdent(name);
 		}
 	}
 

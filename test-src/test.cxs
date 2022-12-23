@@ -3,5 +3,5 @@ End
 
 Function Main()
     Local pointer:Pointer<Actor>
-    New Pointer<Actor>(1, 2)
+    pointer.Get.Get
 End

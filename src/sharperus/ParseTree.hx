@@ -85,6 +85,7 @@ enum Expr {
 	EUnop(op:Unop, e:Expr);
 	EBinop(left:Expr, op:Binop, right:Expr);
 	ENew(e:NewExpr);
+	EMember(left:Expr, dot:Token, name:Token);
 }
 
 typedef NewExpr = {

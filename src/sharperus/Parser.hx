@@ -434,9 +434,11 @@ class Parser {
 				return parseBinop(first, OpMul);
 			case TkSlash:
 				return parseBinop(first, OpDiv);
+			case TkDot:
+				return parseExprNext(EMember(first, scanner.consume(), expectKind(TkIdent)));
 			case _:
+				return first;
 		}
-		return first;
 	}
 
 	function parseBinop(a:Expr, ctor:Token->Binop):Expr {
